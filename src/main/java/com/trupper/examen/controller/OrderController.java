@@ -1,5 +1,9 @@
 package com.trupper.examen.controller;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trupper.examen.dto.OrdenDto;
 import com.trupper.examen.dto.ProductoDto;
 import com.trupper.examen.entity.Orden;
+import com.trupper.examen.entity.Producto;
+import com.trupper.examen.entity.Sucursal;
 import com.trupper.examen.service.OrderService;
 
 @RestController
@@ -29,10 +35,12 @@ public class OrderController {
 	//@CrossOrigin(origins = "*")
 	@PostMapping("/{sucursal}")
 	
-	public OrdenDto save (@RequestBody Orden order, @PathVariable("sucursal") String sucursal) {
+	public OrdenDto save (@RequestBody OrdenDto order, @PathVariable("sucursal") String sucursal) {
 		
 		return this.orderService.save(order, sucursal);
 	}
+	
+
 	
 	//@CrossOrigin(origins = "*")
 	@GetMapping("/{id}")

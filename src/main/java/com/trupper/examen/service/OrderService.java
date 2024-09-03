@@ -1,7 +1,9 @@
 package com.trupper.examen.service;
 
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -30,7 +32,8 @@ public class OrderService {
 	@Autowired
 	ProductoRepository productoRepository;
 	
-	public OrdenDto save (Orden orden, String sucursal ) {
+	public OrdenDto save (OrdenDto ordenDto, String sucursal ) {
+		Orden orden = convertToEntity(ordenDto);
 		Sucursal suc = new Sucursal();
 		suc.setNombre(sucursal);
 		Example<Sucursal> example = Example.of(suc);
@@ -47,6 +50,35 @@ public class OrderService {
 		Orden orderSaved = orderRepository.save(orden);
 
 		return orderSaved.convertToDto();
+	}
+	
+	private Orden convertToEntity (OrdenDto order) {
+		Orden data = new Orden();
+		
+		data.setFecha(order.getFecha());
+		data.setId(order.getId());
+		data.setTotal(order.getTotal());
+		
+		if (order.getSucursal() != null) {
+		   Sucursal suc = new Sucursal();	
+		   suc.setId(order.getSucursal().getId());
+		   suc.setNombre(order.getSucursal().getNombre());
+		   data.setSucursal(suc);
+		}
+		
+		if (order.getProductos() != null) {
+			List<Producto> lista = order.getProductos().stream().map(dto -> {
+			  Producto p = new Producto();
+				p.setCodigo(dto.getCodigo());
+				p.setDescripcion(dto.getDescripcion());
+				p.setId(dto.getId());
+				p.setPrecio(dto.getPrecio());
+				return p;
+		      }).collect(Collectors.toList());
+		   data.setProductos(lista);
+		  
+		}
+		return data;
 	}
 	
 	public OrdenDto findById (Long id) {
